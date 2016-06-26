@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
@@ -71,7 +72,7 @@ public class SecondFragment extends Fragment {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            if (e2.getX() - e1.getX() > MIN_DISTANCE
+           /* if (e2.getX() - e1.getX() > MIN_DISTANCE
                     && Math.abs(velocityX) > MIN_VELOCITY) {
                 //向右滑动
                 mFlipper.showPrevious();
@@ -79,6 +80,31 @@ public class SecondFragment extends Fragment {
                     && Math.abs(velocityX) > MIN_VELOCITY) {
                 //向左边滑动
                 mFlipper.showNext();
+            }
+            return true;*/
+
+            //上面的是轮播,fipper默认支持的,以下是解决不去轮播
+            if (e2.getX() - e1.getX() > MIN_DISTANCE
+                    && Math.abs(velocityX) > MIN_VELOCITY) {
+                if (mFlipper.getDisplayedChild() != 0 ){
+                    //从左向右滑动
+                    mFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext,R.anim.in_left_right));
+                    mFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext,R.anim.out_left_right));
+                    mFlipper.showPrevious();
+                }else {
+                    mFlipper.stopFlipping();
+                }
+
+            } else if (e2.getX() - e1.getX() < MIN_DISTANCE
+                    && Math.abs(velocityX) > MIN_VELOCITY) {
+                if (mFlipper.getDisplayedChild() != mFlipper.getChildCount()-1) {
+                    //从右向左边滑动
+                    mFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext,R.anim.in_right_left));
+                    mFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext,R.anim.out_right_left));
+                    mFlipper.showNext();
+                }else {
+                    mFlipper.stopFlipping();
+                }
             }
             return true;
         }
